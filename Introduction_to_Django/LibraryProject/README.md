@@ -1,6 +1,6 @@
 # LibraryProject
 
-Basic Django project for ALX backend training - library management classwork.
+Basic Django project for ALX backend training - library project for Alx task.
 
 ## Setup
 1. `pip install django`
