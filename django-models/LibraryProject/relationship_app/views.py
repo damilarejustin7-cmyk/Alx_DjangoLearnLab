@@ -1,8 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import DetailView, ListView
-
-from .models import Book, Library
-
+from .models import Book
+from .models import Library
 def list_books(request):
     books = Book.objects.select_related("author").all()
     # Uses the required template:
