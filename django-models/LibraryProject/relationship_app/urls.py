@@ -4,6 +4,7 @@ from django . import views
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LogoutView
 from .views import admin_view, librarian_view, member_view
+from .views import add_book, edit_book, delete_book
 
 urlpatterns = [
     path('books/', list_books, name='list_books'),
@@ -21,4 +22,10 @@ urlpatterns = [
     path('admin_view/', admin_view, name='admin_view'),
     path('librarian_view/', librarian_view, name='librarian_view'),
     path('member_view/', member_view, name='member_view'),
+]
+
+urlpatterns = [
+    path('add_book/', add_book, name='add_book'),
+    path('edit_book/<int:pk>/', edit_book, name='edit_book'),
+    path('delete_book/<int:pk>/', delete_book, name='delete_book'),
 ]
