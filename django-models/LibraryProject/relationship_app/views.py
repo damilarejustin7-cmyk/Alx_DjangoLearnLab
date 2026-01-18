@@ -1,11 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect 
 from django.views.generic.detail import DetailView
-
 from .models import Book 
 from .models import Library
-
 from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationFrom
+from django.contrib.auth.forms import UserCreationForm
 
 
 def list_books(request):
@@ -22,7 +20,7 @@ class LibraryDetailView(DetailView):
     context_object_name = "library"
 
 
-Class SignUpView(DetailView):
+class SignUpView(DetailView):
     form_class = UserCreationForm
     success_url = "/login/"
     template_name = 'registration/signup.html'
