@@ -21,6 +21,11 @@ def edit_book(request, pk):
 def delete_book(request, pk):
     pass
 
+def book_list(request):
+    books = Book.objects.all()
+    return render(request, 'bookshelf/book_list.html', {'books': books})
+
+# Example of secure search to prevent SQL Injection
 def book_search(request):
     query = request.GET.get('q')
     if query:
