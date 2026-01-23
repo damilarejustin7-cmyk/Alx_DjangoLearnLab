@@ -154,3 +154,8 @@ CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'", 'trusted-scripts.example.com')
 CSP_STYLE_SRC = ("'self'", 'trusted-styles.example.com')
 csp_IMG_SRC = ("'self'",)
+
+# settings.py
+
+# Tells Django to trust the X-Forwarded-Proto header from the proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
