@@ -1,6 +1,6 @@
 # api/views.py
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import viewsets, generics
 from .models import Book
 from .serializers import BookSerializer
 from rest_framework.viewsets import ModelViewSet
@@ -11,6 +11,6 @@ class BookList(generics.ListAPIView):
     serializer_class = BookSerializer
 
 # This handles GET, POST, PUT, DELETE logic for Task 2
-class BookViewSet(ModelViewSet):
+class BookViewSet(Viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
