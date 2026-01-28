@@ -3,7 +3,6 @@ from django.shortcuts import render
 from rest_framework import viewsets, generics
 from .models import Book
 from .serializers import BookSerializer
-from rest_framework.viewsets import ModelViewSet
 
 # This handles only the GET (List) logic as requested in Task 1
 class BookList(generics.ListAPIView): 
