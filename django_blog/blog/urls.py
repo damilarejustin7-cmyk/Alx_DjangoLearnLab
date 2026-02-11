@@ -1,10 +1,24 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from . import views import PostListView
+from . import views import PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView
 urlpatterns = [
     # Blog Home
     path('', PostListView.as_view(), name='home'),
     path('posts/', PostListView.as_view(), name='post-list'),
+    
+    # Detail
+    path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+
+    # Create
+    path('post/new/', PostCreateView.as_view(), name='post-create'),
+
+    # Update
+    path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
+
+    # Delete
+    path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
+
+
 
     # Authentication
     path('register/', views.register, name='register'),
