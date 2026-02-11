@@ -142,3 +142,6 @@ TEMPLATES = [
         },
     },
 ]
+
+LOGIN_REDIRECT_URL = 'profile'  # Where to go after logging in
+LOGOUT_REDIRECT_URL = 'login'    # Where to go after logging out
