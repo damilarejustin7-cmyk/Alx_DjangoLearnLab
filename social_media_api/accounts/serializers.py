@@ -1,7 +1,7 @@
 # DRF serializers for data validation/serialization
 from rest_framework import serializers
 # Built-in auth for password checking during login
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 # Import our custom user model
 from .models import CustomUser
 # Token model for generating/retrieving auth tokens
@@ -22,7 +22,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         # Create user with hashed password (create_user handles hashing)
-        user = CustomUser.objects.create_user(**validated_data)
+        user =  get_user_model().objects.create_user(**validated_data)
         # Generate and save token for immediate use
         Token.objects.create(user=user)
         return user
