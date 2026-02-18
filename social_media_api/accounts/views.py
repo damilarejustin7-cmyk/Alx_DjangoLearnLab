@@ -1,14 +1,32 @@
 # DRF imports for API views and responses
+from  .models import CustomUser # Our custom user model
 from rest_framework import status
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 # Token model for login/retrieval
 from rest_framework.authtoken.models import Token
 # Our serializers
-from .serializers import RegisterSerializer, LoginSerializer
-# Create your views here.
+from .serializers import RegisterSerializer, LoginSerializer, CustomUserSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import action
+from rest_framework import viewsets
 
+class CustomUserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def follow(self, request, pk=None):
+        user_to_follow = self.get_object()
+        request.user.following.add(user_to_follow)
+        return Response({"message": "Followed successfully."})
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def unfollow(self, request, pk=None):
+        user_to_unfollow = self.get_object()
+        request.user.following.remove(user_to_unfollow)
+        return Response({"message": "Unfollowed successfully."})
+    
 class RegisterView(CreateAPIView):
     """API endpoint for new user registration. Auto-generates token."""
     serializer_class = RegisterSerializer  # Uses RegisterSerializer above
@@ -44,3 +62,4 @@ class RetrieveTokenView(CreateAPIView):
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'token': token.key})
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+       
