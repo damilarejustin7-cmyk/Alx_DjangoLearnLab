@@ -3,17 +3,18 @@ posts/views.py - Complete API views for Posts, Comments, and Feed
 Handles CRUD, pagination, filtering, permissions, and social feed functionality.
 """
 
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated as permissions_IsAuthenticated 
+from rest_framework.permissions import IsAuthenticated 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-
-from .models import Post, Comment
+from rest_framework.views import APIView
+from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer
 from .filters import PostFilter
-
+from notifications.models import Notification
+from django.contrib.contenttypes.models import ContentType
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
@@ -76,3 +77,24 @@ def user_feed(request):
     
     serializer = PostSerializer(feed_posts, many=True)
     return Response(serializer.data)
+
+class LikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        post = Post.objects.get(pk=pk)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        if not created:
+            like.delete()
+            return Response({'liked': False, 'count': post.like_set.count()}, status=status.HTTP_200_OK)
+        
+        # Create notification if not self-like
+        if request.user != post.user:
+            Notification.objects.create(
+                recipient=post.user,
+                actor=request.user,
+                verb='liked your post',
+                target_content_type=ContentType.objects.get_for_model(post),
+                target_object_id=post.pk
+            )
+        return Response({'liked': True, 'count': post.like_set.count()}, status=status.HTTP_201_CREATED)
