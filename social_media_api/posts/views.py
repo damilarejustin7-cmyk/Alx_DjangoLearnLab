@@ -2,7 +2,7 @@
 posts/views.py - Complete API views for Posts, Comments, and Feed
 Handles CRUD, pagination, filtering, permissions, and social feed functionality.
 """
-
+from rest_framework import generics
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -82,13 +82,14 @@ class LikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
-        post = Post.objects.get(pk=pk)
+        # Add this exact line
+        post = generics.get_object_or_404(Post, pk=pk)
+        
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         if not created:
             like.delete()
             return Response({'liked': False, 'count': post.like_set.count()}, status=status.HTTP_200_OK)
         
-        # Create notification if not self-like
         if request.user != post.user:
             Notification.objects.create(
                 recipient=post.user,
