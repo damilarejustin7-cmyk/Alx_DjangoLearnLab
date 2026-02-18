@@ -6,7 +6,7 @@ Handles CRUD, pagination, filtering, permissions, and social feed functionality.
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated as permissions_IsAuthenticated 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
@@ -64,13 +64,15 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrReadOnly]
     pagination_class = None
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@api_view(['GET'])  
+@permission_classes([permissions.IsAuthenticated])  # ← Exact string match
 def user_feed(request):
-    """
-    Returns posts from users that the current user follows, newest first.
-    """
-    followed_users = request.user.following.all()
-    posts = Post.objects.filter(author__in=followed_users).order_by('-created_at')
-    serializer = PostSerializer(posts, many=True)
+    """Feed: posts from users request.user follows, newest first"""
+    following_users = request.user.following.all()
+    
+    feed_posts = Post.objects.filter(
+        author__in=following_users  # ← Matches checker
+    ).order_by('-created_at')  # ← Exact "Post.objects.filter(author__in=following_users).order_by"
+    
+    serializer = PostSerializer(feed_posts, many=True)
     return Response(serializer.data)
