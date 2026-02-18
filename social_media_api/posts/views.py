@@ -64,23 +64,13 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrReadOnly]
     pagination_class = None
 
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_feed(request):
     """
-    Social feed endpoint: /api/posts/feed/
-    Returns posts from users that request.user follows, newest first
+    Returns posts from users that the current user follows, newest first.
     """
-
-    following_users = request.user.following.all()
-
-    feed_posts = (
-        Post.objects
-        .filter(author__in=following_users)
-        .select_related('author')
-        .order_by('-created_at')
-    )
-
-    serializer = PostSerializer(feed_posts, many=True)
+    followed_users = request.user.following.all()
+    posts = Post.objects.filter(author__in=followed_users).order_by('-created_at')
+    serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
