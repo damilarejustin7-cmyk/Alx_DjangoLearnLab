@@ -1,10 +1,6 @@
 from django.db import models
-# Remove: from django.contrib.auth.models import User
-from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-
-User = apps.get_model('accounts', 'CustomUser')  # Your custom user
 
 class Notification(models.Model):
     recipient = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='notifications')
